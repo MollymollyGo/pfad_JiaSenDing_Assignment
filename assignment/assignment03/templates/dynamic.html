@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Color Circles</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f5;
+            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background-color: {{ color }};
+            animation: fall 3s linear forwards; /* 使用 forwards 保持掉落后的状态 */
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(0); /* 从点击位置开始 */
+            }
+            100% {
+                transform: translateY(100vh); /* 向下掉落，100vh 是指页面的整个高度 */
+            }
+        }
+        .instructions {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 提示用户左键点击 -->
+<div class="instructions">Left click to create a color circle</div>
+
+<script>
+    document.addEventListener('click', function(event) {
+        // 创建一个彩色的圆形元素
+        var circle = document.createElement('div');
+        circle.className = 'circle';
+        circle.style.left = event.clientX - 25 + 'px';  // 鼠标点击位置 - 圆形半径
+        circle.style.top = event.clientY - 25 + 'px';   // 鼠标点击位置 - 圆形半径
+
+        // 将圆形添加到 body 中
+        document.body.appendChild(circle);
+    });
+</script>
+
+</body>
+</html>
