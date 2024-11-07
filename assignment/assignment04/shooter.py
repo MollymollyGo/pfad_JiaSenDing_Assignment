@@ -47,12 +47,12 @@ for _ in range(TARGET_COUNT):
     targets.append([random.randint(0, SCREEN_WIDTH - 50), random.randint(50, 300), random.choice([3, 4, 5])])
 
 # Boss settings
-boss_img = pygame.Surface((100, 100))
-boss_img.fill(BLACK)
+boss_img = pygame.Surface((50, 50))
+boss_img.fill(RED)
 boss_x = SCREEN_WIDTH - 100
 boss_y = 50
 boss_speed = -5
-boss_active = False
+boss_active = True
 
 # Game state
 score = 0
@@ -74,7 +74,7 @@ def reset_game():
     targets = []
     for _ in range(TARGET_COUNT):
         targets.append([random.randint(0, SCREEN_WIDTH - 50), random.randint(50, 300), random.choice([3, 4, 5])])
-    boss_active = False
+    boss_active = True
     boss_x = SCREEN_WIDTH - 100
     game_state = "playable"
     score = 0
@@ -135,7 +135,7 @@ while True:
                 boss_active = True
 
     # Bullet collision with boss
-    if boss_active and boss_y < bullet_y < boss_y + 100 and boss_x < bullet_x < boss_x + 100:
+    if boss_active and boss_y < bullet_y < boss_y + 50 and boss_x < bullet_x < boss_x + 50:
         if score == TARGET_COUNT:
             game_state = "win"
         else:

@@ -25,7 +25,7 @@ IniHigh=400 # Initial height
 MaxHigh=180 # Maximum height
 CurrentHigh=400 # Variable for player height adjustment
 JumpInput=0 # Jumping speed
-JumpState='Ground' # Player states
+PlayMove= 'Ground' # Player states
 IniPoi=900
 CurrentPoi=IniPoi
 EnemySpeed=0.2
@@ -35,7 +35,7 @@ font = pygame.font.SysFont('Arial', 32)
 
 # Define player states
 def PlayerStates():
-    global CurrentHigh,JumpState,JumpInput
+    global CurrentHigh,PlayMove,JumpInput
     # 3 States control player's position
     if JumpState == 'Ground':  # Keep player in the ground
         CurrentHigh = IniHigh
@@ -63,7 +63,7 @@ EnemyObjList=[]
 
 
 def EnemyMove():
-    global EnemySpeed, IniPoi, CurrentPoi,PlayerImage,JumpState
+    global EnemySpeed, IniPoi, CurrentPoi,PlayerImage,PlayMove
     for x in EnemyObjList:
         screen.blit(x.img, (x.CurrentPoi, IniHigh))  # Draw enemy image
         x.CurrentPoi -= EnemySpeed # Enemy moving
@@ -86,16 +86,16 @@ RandomSec=randrange(3,6)
 repeat_function(RandomSec)
 
 def CollideDetect():
-    global EnemySpeed, IniPoi, CurrentPoi, PlayerImage, JumpState
+    global EnemySpeed, IniPoi, CurrentPoi, PlayerImage, PlayMove
     for x in EnemyObjList:
         if x.CurrentPoi<10:
             if CurrentHigh>300:
                 JumpState='Losing'
 
 def SetText():
-    if JumpState!='Losing':
+    if PlayMove!= 'Losing':
         text = font.render('Press SPACE to jump', True, (0, 0, 0))  # Playing
-    if JumpState == 'Losing':
+    if PlayMove == 'Losing':
         text = font.render('You Lose! REOPEN the game to reset', True, (0, 0, 0)) # Losed
     screen.blit(text, (0, 100))
 
@@ -107,14 +107,14 @@ while running:
 
         if event.type == pygame.QUIT: # Click close window
             running=False # Quit game
-        if JumpState=='Ground': # Space Input trigger jump action
+        if PlayMove== 'Ground': # Space Input trigger jump action
             if event.type==pygame.KEYUP:
                 if event.key==pygame.K_SPACE:
-                    JumpState='Jumping'
-        if JumpState=='Losing':
+                    PlayMove= 'Jumping'
+        if PlayMove== 'Losing':
             if event.type==pygame.KEYUP:
                 if event.key==pygame.K_r:
-                    JumpState = 'Ground'
+                    PlayMove = 'Ground'
     SetText()
     PlayerStates() # States trigger actions
     EnemyMove()
