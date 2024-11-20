@@ -90,7 +90,8 @@ class Player:
 
     def draw(self):  # 5
         pygame.draw.rect(self.win, self.color, (self.player_x, self.player_y, self.width, self.height))
-
+    def draw_other_player(self):
+        pygame.draw.rect(self.win, self.color, (self.player_x, 50 , self.width, self.height))
 
 
 # client.py
@@ -104,6 +105,7 @@ class GameWindow:
                              player_x=randint(0, self.width - 50),
                              player_y=randint(0, self.height - 50),
                              color=playerBLUE)
+
         self.port = 5000  # 1
         self.host = "127.0.0.1"
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -141,14 +143,18 @@ class GameWindow:
                 self.add_one_player(key, value)
             else:
                 pos = value["pos"]
-                self.other_players_dict[key].x = pos[0]
-                self.other_players_dict[key].y = pos[1]
-                self.other_players_dict[key].draw()
+                self.other_players_dict[key].player_x = pos[0]
+                self.other_players_dict[key].player_y = pos[1]
+                self.other_players_dict[key].draw_other_player()
+
+
 
     def add_one_player(self, player_id, value):  # 7
         pos = value["pos"]
         color = value["color"]
+
         self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color)
+
 
     def delete_offline_players(self, data):  # 8
         new_dict = {}
