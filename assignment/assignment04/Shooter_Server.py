@@ -48,7 +48,8 @@ class Server:
         key = data["id"]
         pos = data["pos"]
         color = data["color"]
-        self.players_data[key] = {"pos": pos, "color": color}
+        bullet_state = data["bullet_state"]
+        self.players_data[key] = {"pos": pos, "color": color, "bullet_state": bullet_state}
 
     def get_other_players_data(self, current_player_id):
         data = {}

@@ -37,7 +37,7 @@ player_lives = 3
 bullet_img = pygame.Surface((10, 30))
 bullet_img.fill(bulletGREEN)
 bullet_speed = -20
-bullet_state = "ready"
+bullet_state = 0
 bullet_x = 0
 bullet_y = player_y
 
@@ -66,7 +66,8 @@ game_state = "playable"
 
 
 class Player:
-    def __init__(self, win, p_id, player_x, player_y, color):
+    def __init__(self, win, p_id, player_x, player_y, color,bullet):
+
         self.win = win  # 1
         self.id = p_id  # 2
         self.player_speed = 7  # 3
@@ -77,21 +78,45 @@ class Player:
         self.width = 35
         self.height = 35
         self.color = color
-
+        self.bullet = bullet
+        self.bullet_state = 0
         #player_lives = 3
 
     def move(self):  # 4
+        global bullet_x
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and self.player_x > 0:
             self.player_x -= self.player_speed
         if keys[pygame.K_RIGHT] and self.player_x < SCREEN_WIDTH - 50:
             self.player_x += self.player_speed
+        if keys[pygame.K_SPACE] and self.bullet_state == 0:
+            bullet_x = self.player_x + 20
+            self.bullet_state = 1
+
+    def shoot(self): # 0: ready; 1: fired
+        global bullet_x,bullet_y
+        if self.bullet_state == 1:
+            self.bullet=self.bullet_state
+            bullet_y += bullet_speed
+            if bullet_y < 0:
+                self.bullet_state = 0
+                self.bullet = self.bullet_state
+                bullet_y = self.player_y
+        else:
+            bullet_x = self.player_x + 20
+            bullet_y = self.player_y
+
 
 
     def draw(self):  # 5
         pygame.draw.rect(self.win, self.color, (self.player_x, self.player_y, self.width, self.height))
+        if self.bullet_state == 1:
+            SCREEN.blit(bullet_img, (bullet_x, bullet_y))
     def draw_other_player(self):
-        pygame.draw.rect(self.win, self.color, (self.player_x, 50 , self.width, self.height))
+        pygame.draw.rect(self.win, bossORANGE, (self.player_x, 50 , self.width, self.height))
+        if self.bullet_state == 1:
+            enemy_bullet_y = self.player_y - bullet_y # 计算敌人子弹的 y 坐标
+            SCREEN.blit(bullet_img, (bullet_x, enemy_bullet_y))
 
 
 # client.py
@@ -104,7 +129,8 @@ class GameWindow:
                              p_id=None,
                              player_x=randint(0, self.width - 50),
                              player_y=randint(0, self.height - 50),
-                             color=playerBLUE)
+                             color=playerBLUE,
+                             bullet=0)
 
         self.port = 5000  # 1
         self.host = "127.0.0.1"
@@ -120,7 +146,8 @@ class GameWindow:
         data = {
             "id": self.player.id,
             "pos": [self.player.player_x, self.player.player_y],
-            "color": self.player.color
+            "color": self.player.color,
+            "bullet_state": self.player.bullet,
         }
         self.sock.send(json.dumps(data).encode("utf-8"))
         return self.sock.recv(2048).decode("utf-8")
@@ -130,6 +157,7 @@ class GameWindow:
 
         self.player.move()
         self.player.draw()
+        self.player.shoot()
 
         other_players_data = json.loads(self.send_player_data())
         self.update_other_players_data(other_players_data)
@@ -138,23 +166,24 @@ class GameWindow:
         pygame.display.update()
 
     def update_other_players_data(self, data):  # 6
+        print(f"Received data: {data}")
         for key, value in data.items():
             if not self.other_players_dict.get(key):
                 self.add_one_player(key, value)
             else:
                 pos = value["pos"]
+                bullet = value.get("bullet_state", 0)  # 设置默认值
                 self.other_players_dict[key].player_x = pos[0]
                 self.other_players_dict[key].player_y = pos[1]
+                self.other_players_dict[key].bullet_state = bullet
                 self.other_players_dict[key].draw_other_player()
 
-
-
-    def add_one_player(self, player_id, value):  # 7
+    def add_one_player(self, player_id, value):
         pos = value["pos"]
         color = value["color"]
+        bullet = value.get("bullet_state", 0)  # 设置 bullet_state 的默认值为 0
 
-        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color)
-
+        self.other_players_dict[player_id] = Player(self.window, player_id, pos[0], pos[1], color, bullet)
 
     def delete_offline_players(self, data):  # 8
         new_dict = {}
