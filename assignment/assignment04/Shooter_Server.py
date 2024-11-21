@@ -3,6 +3,8 @@ import json
 import socket
 from threading import Thread
 
+#from assignment.assignment04.Shooter_Client import game_state
+
 
 class Server:
     def __init__(self):
@@ -31,6 +33,7 @@ class Server:
         while True:
             try:
                 data = conn.recv(2048)
+                print(data)
                 if not data:
                     print("未接收到数据，关闭连接")
                     self.players_data.pop(str(id(conn)))
@@ -49,7 +52,9 @@ class Server:
         pos = data["pos"]
         color = data["color"]
         bullet_state = data["bullet_state"]
-        self.players_data[key] = {"pos": pos, "color": color, "bullet_state": bullet_state}
+        game_states = data["game_state"]
+        enemy_bullet_poi_y=data["enemy_bullet_poi_y"]
+        self.players_data[key] = {"pos": pos, "color": color, "bullet_state": bullet_state, "game_state": game_states,"enemy_bullet_poi_y":enemy_bullet_poi_y}
 
     def get_other_players_data(self, current_player_id):
         data = {}
