@@ -125,9 +125,9 @@ class Player:
     def other_game_over(self):
         global Game_Manager
         if self.game_state==1:
-            Game_Manager="win"
-            pygame.display.set_caption("you win")
+            #pygame.display.set_caption("you win")
             display_text("You Win!", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
+            Game_Manager = "win"
     def game_over(self):
         #print(self.player_x,self.player_y,bullet_y)
         global other_bullet_x,enemyBulletMove,Game_Manager
@@ -136,9 +136,12 @@ class Player:
             self.other_game_state=self.game_state
         else: self.game_state = 0;self.other_game_state=self.game_state
         if self.game_state==1:
-            Game_Manager = "lose"
-            pygame.display.set_caption("you lose")
+            #pygame.display.set_caption("you lose")
             display_text("You lose!" , SCREEN_WIDTH // 2 - 100,SCREEN_HEIGHT // 2)
+            Game_Manager = "lose"
+
+
+
 # client.py
 class GameWindow:
     def __init__(self):
@@ -175,7 +178,7 @@ class GameWindow:
         return self.sock.recv(2048).decode("utf-8")
 
     def update_window(self):  # 5
-        global Game_Manager
+        global Game_Manager,bullet_y
         if Game_Manager=="playable":
             self.window.fill(canvasGRAY)
             self.player.move()
@@ -186,6 +189,21 @@ class GameWindow:
             other_players_data = json.loads(self.send_player_data())
             self.update_other_players_data(other_players_data)
             self.delete_offline_players(other_players_data)
+
+        if Game_Manager != "playable":  # reset game
+            self.player_x = SCREEN_WIDTH // 2 - 25
+            self.player_y = SCREEN_HEIGHT - 70
+            self.x = player_x
+            self.y = player_y
+            self.bullet_state = 0
+            self.other_bullet_y = 50
+            self.other_bullet_state = "ready"
+            self.game_state = 0  # 0:playable; 1: win
+            self.other_game_state = 0
+            self.enemy_bullet_y = 0
+            bullet_y=player_y
+            self.other_bullet_y = 50
+            self.bullet_state
         pygame.display.update()
 
     def update_other_players_data(self, data):  # 6
@@ -210,7 +228,11 @@ class GameWindow:
                 self.player.enemy_bullet_y=self.other_players_dict[key].enemy_bullet_poi_y
                 #self.other_players_dict[key].game_over()
 
-
+            if Game_Manager!="playable": # reset game
+                self.other_players_dict[key].player_x = SCREEN_WIDTH // 2 - 25
+                self.other_players_dict[key].player_y = 50
+                self.other_players_dict[key].bullet_state = 0
+                self.other_players_dict[key].game_state = 0
 
     def add_one_player(self, player_id, value):
         pos = value["pos"]
@@ -234,6 +256,7 @@ class GameWindow:
 
 
     def start(self):  # 3
+        global Game_Manager
         clock = pygame.time.Clock()
 
         while True:
@@ -243,7 +266,10 @@ class GameWindow:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
+                if Game_Manager != "playable":
+                    pygame.time.delay(2000)
+                    display_text(" ", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
+                    Game_Manager = "playable"
             self.update_window()
 
 
