@@ -5,6 +5,8 @@ import socket
 import random
 from random import randint
 
+
+pygame.init()
 # Screen settings
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
@@ -23,7 +25,7 @@ playerBLUE = (2, 255, 255)
 
 # Clock and font
 clock = pygame.time.Clock()
-#font = pygame.font.SysFont(None, 55)
+font = pygame.font.SysFont(None, 55)
 
 # Player settings
 #player_img = pygame.Surface((35, 35))
@@ -42,6 +44,11 @@ bullet_x = 0
 bullet_y = player_y
 
 enemyBulletMove=0
+Game_Manager="playable"
+
+def display_text(text, x, y):
+    screen_text = font.render(text, True, bossORANGE)
+    SCREEN.blit(screen_text, [x, y])
 
 class Player:
     def __init__(self, win, p_id, player_x, player_y, color, bullet,game_state):
@@ -116,17 +123,22 @@ class Player:
         SCREEN.blit(self.other_bullet_img, (other_bullet_x, self.other_bullet_y))
 
     def other_game_over(self):
+        global Game_Manager
         if self.game_state==1:
+            Game_Manager="win"
             pygame.display.set_caption("you win")
+            display_text("You Win!", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
     def game_over(self):
         #print(self.player_x,self.player_y,bullet_y)
-        global other_bullet_x,enemyBulletMove
+        global other_bullet_x,enemyBulletMove,Game_Manager
         if self.game_state==0 and self.player_y < enemyBulletMove < self.player_y+35 and self.player_x < other_bullet_x < self.player_x + 35:
             self.game_state = 1
             self.other_game_state=self.game_state
         else: self.game_state = 0;self.other_game_state=self.game_state
         if self.game_state==1:
+            Game_Manager = "lose"
             pygame.display.set_caption("you lose")
+            display_text("You lose!" , SCREEN_WIDTH // 2 - 100,SCREEN_HEIGHT // 2)
 # client.py
 class GameWindow:
     def __init__(self):
@@ -163,17 +175,17 @@ class GameWindow:
         return self.sock.recv(2048).decode("utf-8")
 
     def update_window(self):  # 5
-        self.window.fill(canvasGRAY)
-        self.player.move()
-        self.player.draw()
-        self.player.shoot()
-        #self.player.other_game_over()
-        self.player.game_over()
-
-        other_players_data = json.loads(self.send_player_data())
-        self.update_other_players_data(other_players_data)
-        self.delete_offline_players(other_players_data)
-
+        global Game_Manager
+        if Game_Manager=="playable":
+            self.window.fill(canvasGRAY)
+            self.player.move()
+            self.player.draw()
+            self.player.shoot()
+            # self.player.other_game_over()
+            self.player.game_over()
+            other_players_data = json.loads(self.send_player_data())
+            self.update_other_players_data(other_players_data)
+            self.delete_offline_players(other_players_data)
         pygame.display.update()
 
     def update_other_players_data(self, data):  # 6
@@ -216,7 +228,7 @@ class GameWindow:
         self.other_players_dict = new_dict
 
     def init_window(self):  # 1
-        pygame.init()
+
         pygame.display.set_caption('Shooter Client')
         return pygame.display.set_mode((self.width, self.height))
 
