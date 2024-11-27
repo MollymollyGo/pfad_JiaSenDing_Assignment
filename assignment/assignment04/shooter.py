@@ -2,16 +2,16 @@ import pygame
 import random
 import sys
 
-# Initialize Pygame
+# Initialize pygame
 pygame.init()
 
-# Screen settings
+# set up the screen
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Shooter Game")
 
-# Colors
+#define Colors we will use
 canvasGRAY = (215, 215, 215)
 enemyBLUE = (50, 183, 240)
 enemyFrozenBLUE = (116, 146, 157)
@@ -21,7 +21,7 @@ healthYELLOW = (255, 255, 5)
 textWHITE = (255, 255, 255)
 playerBLUE = (2, 255, 255)
 
-# Clock and font
+# Clock and font title
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 55)
 
@@ -59,7 +59,7 @@ boss_y = 50
 boss_speed = -5
 boss_active = True
 
-# Game state
+# Game state,time, score
 score = 0
 time_remaining = 60
 game_state = "playable"
@@ -69,7 +69,7 @@ def display_text(text, x, y):
     screen_text = font.render(text, True, textWHITE)
     SCREEN.blit(screen_text, [x, y])
 
-
+#define reset game function
 def reset_game():
     global player_lives, bullet_state, bullet_x, bullet_y, boss_active, boss_x, game_state, score, time_remaining
     player_lives = 3
@@ -91,11 +91,11 @@ def reset_game():
 
 last_time = pygame.time.get_ticks()
 
-# Main game loop
+# define Main game loop
 while True:
     SCREEN.fill(canvasGRAY)
 
-    # Event handling
+    # Quit and shoot event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -125,7 +125,7 @@ while True:
         bullet_x = player_x + 20
         bullet_y = player_y
 
-    # Target movement
+    # Enemy movement
     for enemy in enemy_list:
         enemy[0] += enemy[2]
         if enemy[0] > SCREEN_WIDTH or enemy[0] < 0:
@@ -137,7 +137,7 @@ while True:
         if boss_x < 0 or boss_x > SCREEN_WIDTH - 100:
             boss_speed *= -1
 
-    # Bullet collision with targets
+    # Bullet collision with enemies
     for enemy in enemy_list:
         if enemy[1] < bullet_y < enemy[1] + 35 and enemy[0] < bullet_x < enemy[0] + 35:
             if enemy[3] == enemyFrozenBLUE:
@@ -156,7 +156,7 @@ while True:
             else:
                 game_state = "lose"
 
-    # Draw player, bullet, targets, and boss
+    # Draw player, bullet, enemies, and boss
     SCREEN.blit(player_img, (player_x, player_y))
     if bullet_state == "fired":
         SCREEN.blit(bullet_img, (bullet_x, bullet_y))
@@ -166,7 +166,7 @@ while True:
     if boss_active:
         SCREEN.blit(boss_img, (boss_x, boss_y))
 
-    # Draw lives and timer
+    # Draw player's lives and time
     for i in range(player_lives):
         pygame.draw.rect(SCREEN, healthYELLOW, (10 + i * 30, 10, 20, 20))
     display_text(f"Time: {time_remaining}", SCREEN_WIDTH - 200, 10)
