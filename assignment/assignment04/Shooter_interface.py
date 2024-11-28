@@ -25,10 +25,10 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if button1.collidepoint(event.pos):
-                # 运行 script1.py
+                # run script1.py
                 subprocess.run([sys.executable, 'shooter.py'])
             elif button2.collidepoint(event.pos):
-                # 运行 script2.py
+                # run script2.py
                 subprocess.run([sys.executable, 'Shooter_Client.py'])
 
 

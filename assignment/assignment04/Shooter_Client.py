@@ -127,7 +127,7 @@ class Player:
         global Game_Manager
         if self.game_state==1: # unplayable
             #pygame.display.set_caption("you win")
-            display_text("You Win!", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
+            display_text("You Win, reopen the game to reset!", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
             Game_Manager = "win"
     def game_over(self):
         #print(self.player_x,self.player_y,bullet_y)
@@ -138,7 +138,7 @@ class Player:
         else: self.game_state = 0;self.other_game_state=self.game_state
         if self.game_state==1:
             #pygame.display.set_caption("you lose")
-            display_text("You lose!" , SCREEN_WIDTH // 2 - 100,SCREEN_HEIGHT // 2)
+            display_text("You lose, reopen the game to reset!" , SCREEN_WIDTH // 2 - 100,SCREEN_HEIGHT // 2)
             Game_Manager = "lose" # unplayable
 
 
@@ -191,20 +191,6 @@ class GameWindow:
             self.update_other_players_data(other_players_data)
             self.delete_offline_players(other_players_data)
 
-        if Game_Manager != "playable":  # reset game
-            self.player_x = SCREEN_WIDTH // 2 - 25
-            self.player_y = SCREEN_HEIGHT - 70
-            self.x = player_x
-            self.y = player_y
-            self.bullet_state = 0
-            self.other_bullet_y = 50
-            self.other_bullet_state = "ready"
-            self.game_state = 0  # 0:playable; 1: win
-            self.other_game_state = 0
-            self.enemy_bullet_y = 0
-            bullet_y=player_y
-            self.other_bullet_y = 50
-            self.bullet_state
         pygame.display.update()
 
     def update_other_players_data(self, data):  # receive enemy's information from the server
@@ -229,11 +215,6 @@ class GameWindow:
                 self.player.enemy_bullet_y=self.other_players_dict[key].enemy_bullet_poi_y # load enemy's bullet position in this client
                 #self.other_players_dict[key].game_over()
 
-            if Game_Manager!="playable": # reset game
-                self.other_players_dict[key].player_x = SCREEN_WIDTH // 2 - 25
-                self.other_players_dict[key].player_y = 50
-                self.other_players_dict[key].bullet_state = 0
-                self.other_players_dict[key].game_state = 0
 
     def add_one_player(self, player_id, value): # add enemy and prepare to send date
         pos = value["pos"]
