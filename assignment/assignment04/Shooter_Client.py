@@ -127,7 +127,7 @@ class Player:
         global Game_Manager
         if self.game_state==1: # unplayable
             #pygame.display.set_caption("you win")
-            display_text("You Win, reopen the game to reset!", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
+            display_text("You Win, reopen the game to reset!", 150, 300)
             Game_Manager = "win"
     def game_over(self):
         #print(self.player_x,self.player_y,bullet_y)
@@ -138,7 +138,7 @@ class Player:
         else: self.game_state = 0;self.other_game_state=self.game_state
         if self.game_state==1:
             #pygame.display.set_caption("you lose")
-            display_text("You lose, reopen the game to reset!" , SCREEN_WIDTH // 2 - 100,SCREEN_HEIGHT // 2)
+            display_text("You lose, reopen the game to reset!" , 150,300)
             Game_Manager = "lose" # unplayable
 
 
@@ -158,7 +158,7 @@ class GameWindow:
                              game_state=0) # initial player
 
         self.port = 5000  # server inform
-        self.host = "127.0.0.1"
+        self.host = "158.132.53.163" # CHANGE THIS IP (SAME IP THAT SHOWS ON YOUR SERVER)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connect()  # 2
         self.other_players_dict = {}  # 3
@@ -248,10 +248,6 @@ class GameWindow:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if Game_Manager != "playable":
-                    pygame.time.delay(2000)
-                    display_text(" ", SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2)
-                    Game_Manager = "playable"
             self.update_window() # all game function store here
 
 

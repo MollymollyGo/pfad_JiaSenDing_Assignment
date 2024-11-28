@@ -1,0 +1,16 @@
+1. Install libraries that these 4 files need
+2. Run the Shooter_interface
+
+PVE: Single player mode:
+`wasd to move, space to shoot
+`you have 3 lifes which shows on the top-left corner of your screen
+`freeze enemies by shoot them
+`shot enemies who already be freezed will damage player
+`Boss can only be shot after freeze all enemies, or you will lose the game immediately
+
+PVP: Two players mode:
+1. Player who going to run the server need to change the value of self.host in Shooter_Server.py (Check Line 12 at that file)
+2. Run server on one of your devices by: python -m Shooter_Server
+3. Player who going to join the server need to change the value of self.host in Shooter_Client.py (Check Line 161 at that file)
+4. Both players click PVP button to join the game
+5. After winning or losing, both players close the game window and click PVP button again to reset the game

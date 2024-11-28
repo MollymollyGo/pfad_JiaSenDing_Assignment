@@ -9,7 +9,7 @@ from threading import Thread
 class Server:
     def __init__(self):
         self.port = 5000  # 1
-        self.host = "127.0.0.1"
+        self.host = "127.0.0.1" # CHANGE TO 0.0.0.0 OR OTHERS IF YOU NEED
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.players_data = {}  # 2
 
